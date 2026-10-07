@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1
+
+- Fix the hourly update check always failing: bound `checkupdates` output through a pipe instead of `ulimit -f`, which also capped pacman's database sync and killed it with SIGXFSZ.
+
 ## 1.6.0
 
 - Ignore large non-tunnel Mullvad listener events without losing later status changes; retain bounded streaming and retry backoff.

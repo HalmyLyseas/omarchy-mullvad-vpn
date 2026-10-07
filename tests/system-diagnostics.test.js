@@ -122,6 +122,37 @@ test("update helper invokes only PATH-shadowed checkupdates and bounds results",
     assert.ok(result.stdout.length <= 4096);
 });
 
+test("update helper lets checkupdates sync databases larger than the output bound", () => {
+    const scratch = temporaryDirectory();
+    const bin = join(scratch, "bin");
+    mkdirSync(bin);
+    const db = join(scratch, "extra.db.part");
+    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nhead -c 1048576 /dev/zero > "$MOCK_DB" || exit 1\nprintf 'mullvad-vpn 2026.4-1 -> 2026.5-1\\n'\n`);
+
+    const result = spawnSync("bash", [join(root, "scripts/mullvad-update-check")], {
+        encoding: "utf8",
+        env: { ...process.env, PATH: bin + delimiter + process.env.PATH, MOCK_DB: db }
+    });
+    assert.equal(result.signal, null);
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(readFileSync(db).length, 1048576);
+    assert.equal(result.stdout, "mullvad-vpn 2026.4-1 -> 2026.5-1\n");
+});
+
+test("update helper rejects checkupdates output beyond its bound", () => {
+    const scratch = temporaryDirectory();
+    const bin = join(scratch, "bin");
+    mkdirSync(bin);
+    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nprintf 'mullvad-vpn 2026.4-1 -> 2026.5-1\\n'\nhead -c 262144 /dev/zero | tr '\\\\0' x\n`);
+
+    const result = spawnSync("bash", [join(root, "scripts/mullvad-update-check")], {
+        encoding: "utf8",
+        env: { ...process.env, PATH: bin + delimiter + process.env.PATH }
+    });
+    assert.equal(result.status, 3, result.stderr);
+    assert.equal(result.stdout, "");
+});
+
 test("System diagnostics contain no privileged or mutating package/service capability", () => {
     const files = ["Panel.qml", "Service.qml", "scripts/mullvad-package-info", "scripts/mullvad-update-check"];
     const source = files.map(file => readFileSync(join(root, file), "utf8")).join("\n");
