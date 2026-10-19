@@ -31,10 +31,13 @@ if [[ ! -x "$qmllint_bin" ]]; then
 fi
 
 lint_tree() {
-  local tree="$1" file rc=0
+  local tree="$1" file rc=0 output
   [[ -n "$qmllint_bin" ]] || { echo "qmllint is unavailable" >&2; return 1; }
   while IFS= read -r -d '' file; do
-    "$qmllint_bin" -I "$qmlroot" -I "$omarchy_shell_dir" "$tree/$file" >/dev/null || rc=1
+    if ! output="$("$qmllint_bin" -I "$qmlroot" -I "$omarchy_shell_dir" "$tree/$file" 2>&1)"; then
+      printf '%s\n' "$output" >&2
+      rc=1
+    fi
   done < <(git -C "$root" ls-files -z '*.qml')
   return "$rc"
 }
