@@ -23,7 +23,12 @@ qmlroot="$(mktemp -d)"
 archive_dir="$(mktemp -d)"
 trap 'rm -rf "$qmlroot" "$archive_dir"' EXIT
 ln -s "$omarchy_shell_dir" "$qmlroot/qs"
-qmllint_bin="$(command -v qmllint || command -v /usr/lib/qt6/bin/qmllint || true)"
+# Prefer the explicit Qt 6 linter: a Qt 5 qmllint on PATH can exit silently
+# against Qt 6 QML and make the gate look like an unexplained failure.
+qmllint_bin=/usr/lib/qt6/bin/qmllint
+if [[ ! -x "$qmllint_bin" ]]; then
+  qmllint_bin="$(command -v qmllint || true)"
+fi
 
 lint_tree() {
   local tree="$1" file rc=0

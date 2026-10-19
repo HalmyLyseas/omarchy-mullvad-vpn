@@ -81,12 +81,16 @@ test("long desktop queries skip acronym construction without changing scores", (
 });
 
 test("CLI version warning only trusts the tested release series", () => {
-    assert.deepEqual(Model.SUPPORTED_CLI_SERIES, ["2026.4"]);
+    assert.deepEqual(Model.SUPPORTED_CLI_SERIES, ["2026.4", "2026.5"]);
     assert.equal(Model.parseCliVersion("mullvad-cli 2026.4.1\n"), "2026.4.1");
+    assert.equal(Model.parseCliVersion("mullvad-cli 2026.5\n"), "2026.5");
     assert.equal(Model.parseCliVersion("unexpected output"), "");
     assert.equal(Model.isCliVersionSupported("2026.4"), true);
     assert.equal(Model.isCliVersionSupported("2026.4.1"), true);
+    assert.equal(Model.isCliVersionSupported("2026.5"), true);
+    assert.equal(Model.isCliVersionSupported("2026.5.1"), true);
     assert.equal(Model.isCliVersionSupported("2026.40"), false);
+    assert.equal(Model.isCliVersionSupported("2026.6"), false);
     assert.equal(Model.isCliVersionSupported("2027.1"), false);
     assert.equal(Model.isCliVersionSupported("2026.4-beta1"), false);
 });
@@ -212,6 +216,15 @@ Block social media: true`);
     assert.equal(dns.mode, "custom");
     assert.deepEqual(dns.customServers, ["1.1.1.1", "2606:4700:4700::1111"]);
     assert.equal(dns.blockTrackers, true);
+
+    const multilineDns = Model.parseDns(`Custom DNS: yes
+Servers:
+192.168.1.19
+2606:4700:4700::1111
+Block ads: true`);
+    assert.equal(multilineDns.mode, "custom");
+    assert.deepEqual(multilineDns.customServers, ["192.168.1.19", "2606:4700:4700::1111"]);
+    assert.equal(multilineDns.blockAds, true);
     assert.deepEqual(Model.argv("dnsDefault", { flags: { blockAds: true, blockMalware: true } }),
         ["mullvad", "dns", "set", "default", "--block-ads", "--block-malware"]);
     assert.deepEqual(Model.argv("dnsCustom", { servers: ["1.1.1.1", "2606:4700:4700::1111"] }),
@@ -464,6 +477,9 @@ test("external records and fields are bounded before reaching QML models", () =>
 
     const dns = Model.parseDns("Servers: " + Array.from({ length: 20 }, (_, i) => `192.0.2.${i + 1}`).join(", "));
     assert.equal(dns.customServers.length, 16);
+    const multiline = Model.parseDns("Custom DNS: yes\nServers:\n"
+        + Array.from({ length: 20 }, (_, i) => `192.0.2.${i + 1}`).join("\n"));
+    assert.equal(multiline.customServers.length, 16);
 });
 
 test("listener sequence only advances on tunnel-state events", () => {

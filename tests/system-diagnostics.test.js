@@ -45,19 +45,19 @@ test("Connection owns location selection while Advanced and System own moved con
 });
 
 test("diagnostic parsers return bounded plain text", () => {
-    const daemon = Model.parseDaemonVersion("Current version: <b>2026.4</b>\nSupported: yes\n" + "x".repeat(10000));
-    assert.equal(daemon.version, "2026.4");
+    const daemon = Model.parseDaemonVersion("Current version: <b>2026.5</b>\nSupported: yes\n" + "x".repeat(10000));
+    assert.equal(daemon.version, "2026.5");
     assert.equal(daemon.supported, true);
 
     const skewedDaemon = Model.parseDaemonVersion([
-        "Current version: 2026.4",
-        "mullvad-daemon version: 2026.5",
+        "Current version: 2026.5",
+        "mullvad-daemon version: 2026.6",
         "Supported: yes"
     ].join("\n"));
-    assert.equal(skewedDaemon.version, "2026.5");
+    assert.equal(skewedDaemon.version, "2026.6");
 
     const packages = Model.parsePackageInfo([
-        "mullvad-vpn\t2026.4-1\tMullvad <b>VPN</b>\t2026-09-01 12:00",
+        "mullvad-vpn\t2026.5-1\tMullvad <b>VPN</b>\t2026-09-01 12:00",
         "mullvad-vpn-daemon\t" + "9".repeat(1000) + "\tDaemon\tunknown",
         ...Array.from({ length: 30 }, (_, index) => `other-${index}\t1\tOther\tnow`)
     ].join("\n"));
@@ -66,18 +66,18 @@ test("diagnostic parsers return bounded plain text", () => {
     assert.ok(packages.every(item => item.name.length <= 128 && item.version.length <= 128));
     assert.ok(!JSON.stringify(packages).includes("<"));
 
-    const updates = Model.parseUpdateCheck("mullvad-vpn 2026.4-1 -> <b>2026.5-1</b>\n" + "x".repeat(10000));
-    assert.deepEqual(updates, ["mullvad-vpn 2026.4-1 -> 2026.5-1"]);
+    const updates = Model.parseUpdateCheck("mullvad-vpn 2026.5-1 -> <b>2026.6-1</b>\n" + "x".repeat(10000));
+    assert.deepEqual(updates, ["mullvad-vpn 2026.5-1 -> 2026.6-1"]);
     assert.ok(updates.join("\n").length <= 4096);
 });
 
 test("package metadata helper only reads a bounded local package database", () => {
     const scratch = temporaryDirectory();
     const db = join(scratch, "local");
-    mkdirSync(join(db, "mullvad-vpn-2026.4-1"), { recursive: true });
+    mkdirSync(join(db, "mullvad-vpn-2026.5-1"), { recursive: true });
     mkdirSync(join(db, "unrelated-1.0-1"), { recursive: true });
-    writeFileSync(join(db, "mullvad-vpn-2026.4-1", "desc"), [
-        "%NAME%", "mullvad-vpn", "", "%VERSION%", "2026.4-1", "",
+    writeFileSync(join(db, "mullvad-vpn-2026.5-1", "desc"), [
+        "%NAME%", "mullvad-vpn", "", "%VERSION%", "2026.5-1", "",
         "%DESC%", "Mullvad <b>VPN</b>", "", "%INSTALLDATE%", "1788264000", "",
         "%BUILDDATE%", "1788177600", ""
     ].join("\n"));
@@ -87,7 +87,7 @@ test("package metadata helper only reads a bounded local package database", () =
         encoding: "utf8", env: { ...process.env, MULLVAD_PACMAN_LOCAL_DB: db }
     });
     assert.equal(result.status, 0, result.stderr);
-    assert.match(result.stdout, /^mullvad-vpn\t2026\.4-1\tMullvad VPN\t\d{4}-\d{2}-\d{2}/m);
+    assert.match(result.stdout, /^mullvad-vpn\t2026\.5-1\tMullvad VPN\t\d{4}-\d{2}-\d{2}/m);
     assert.ok(result.stdout.length <= 16384);
     assert.doesNotMatch(result.stdout, /unrelated|[<>]/);
     const metadata = Model.parsePackageInfo(result.stdout)[0];
@@ -96,7 +96,7 @@ test("package metadata helper only reads a bounded local package database", () =
     const missing = Model.parsePackageInfo("mullvad-vpn\t1\tVPN\tunknown\t0\tnot-a-date")[0];
     assert.equal(missing.installedAtIso, "");
     assert.equal(missing.buildAt, "");
-    const desc = join(db, "mullvad-vpn-2026.4-1", "desc");
+    const desc = join(db, "mullvad-vpn-2026.5-1", "desc");
     writeFileSync(desc, readFileSync(desc, "utf8").replace("1788177600", "1788177600000"));
     const malformed = spawnSync("bash", [join(root, "scripts/mullvad-package-info")], {
         encoding: "utf8", env: { ...process.env, MULLVAD_PACMAN_LOCAL_DB: db }
@@ -110,7 +110,7 @@ test("update helper invokes only PATH-shadowed checkupdates and bounds results",
     const bin = join(scratch, "bin");
     mkdirSync(bin);
     const log = join(scratch, "calls");
-    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nprintf 'checkupdates <%s>\\n' "$*" >> "$MOCK_LOG"\nprintf 'mullvad-vpn 2026.4-1 -> 2026.5-1\\nunrelated 1 -> 2\\n%s\\n' "$(printf 'x%.0s' {1..20000})"\n`);
+    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nprintf 'checkupdates <%s>\\n' "$*" >> "$MOCK_LOG"\nprintf 'mullvad-vpn 2026.5-1 -> 2026.6-1\\nunrelated 1 -> 2\\n%s\\n' "$(printf 'x%.0s' {1..20000})"\n`);
 
     const result = spawnSync("bash", [join(root, "scripts/mullvad-update-check")], {
         encoding: "utf8",
@@ -118,7 +118,7 @@ test("update helper invokes only PATH-shadowed checkupdates and bounds results",
     });
     assert.equal(result.status, 0, result.stderr);
     assert.equal(readFileSync(log, "utf8"), "checkupdates <>\n");
-    assert.equal(result.stdout, "mullvad-vpn 2026.4-1 -> 2026.5-1\n");
+    assert.equal(result.stdout, "mullvad-vpn 2026.5-1 -> 2026.6-1\n");
     assert.ok(result.stdout.length <= 4096);
 });
 
@@ -127,7 +127,7 @@ test("update helper lets checkupdates sync databases larger than the output boun
     const bin = join(scratch, "bin");
     mkdirSync(bin);
     const db = join(scratch, "extra.db.part");
-    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nhead -c 1048576 /dev/zero > "$MOCK_DB" || exit 1\nprintf 'mullvad-vpn 2026.4-1 -> 2026.5-1\\n'\n`);
+    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nhead -c 1048576 /dev/zero > "$MOCK_DB" || exit 1\nprintf 'mullvad-vpn 2026.5-1 -> 2026.6-1\\n'\n`);
 
     const result = spawnSync("bash", [join(root, "scripts/mullvad-update-check")], {
         encoding: "utf8",
@@ -136,14 +136,14 @@ test("update helper lets checkupdates sync databases larger than the output boun
     assert.equal(result.signal, null);
     assert.equal(result.status, 0, result.stderr);
     assert.equal(readFileSync(db).length, 1048576);
-    assert.equal(result.stdout, "mullvad-vpn 2026.4-1 -> 2026.5-1\n");
+    assert.equal(result.stdout, "mullvad-vpn 2026.5-1 -> 2026.6-1\n");
 });
 
 test("update helper rejects checkupdates output beyond its bound", () => {
     const scratch = temporaryDirectory();
     const bin = join(scratch, "bin");
     mkdirSync(bin);
-    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nprintf 'mullvad-vpn 2026.4-1 -> 2026.5-1\\n'\nhead -c 262144 /dev/zero | tr '\\\\0' x\n`);
+    writeExecutable(join(bin, "checkupdates"), `#!/usr/bin/env bash\nprintf 'mullvad-vpn 2026.5-1 -> 2026.6-1\\n'\nhead -c 262144 /dev/zero | tr '\\\\0' x\n`);
 
     const result = spawnSync("bash", [join(root, "scripts/mullvad-update-check")], {
         encoding: "utf8",

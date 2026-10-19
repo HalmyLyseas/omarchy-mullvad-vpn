@@ -15,7 +15,7 @@ var MAX_PROVIDERS = 128;
 var MAX_EXCLUDED_PIDS = 256;
 var MAX_DESKTOP_ENTRIES = 4096;
 var MAX_DESKTOP_KEYWORDS = 64;
-var SUPPORTED_CLI_SERIES = ["2026.4"];
+var SUPPORTED_CLI_SERIES = ["2026.4", "2026.5"];
 var SYSTEM_PACKAGE_NAMES = { "mullvad-vpn": true, "mullvad-vpn-daemon": true };
 
 function text(value) {
@@ -590,8 +590,21 @@ function parseDns(raw) {
         "block social media": "blockSocialMedia"
     };
     var lines = boundedLines(raw, 128, 32768);
+    var readingServers = false;
     for (var i = 0; i < lines.length; ++i) {
-        var match = lines[i].match(/^\s*([^:]+):\s*(.*?)\s*$/);
+        var line = lines[i];
+        // The real CLI prints one server per line after a bare "Servers:".
+        if (readingServers) {
+            var server = plainText(line, 128);
+            if (validateDnsAddress(server)) {
+                if (result.customServers.length < 16)
+                    result.customServers.push(server);
+                result.mode = "custom";
+                continue;
+            }
+            readingServers = false;
+        }
+        var match = line.match(/^\s*([^:]+):\s*(.*?)\s*$/);
         if (!match)
             continue;
         var key = match[1].trim().toLowerCase();
@@ -601,6 +614,7 @@ function parseDns(raw) {
             if (!/^yes|on|true|no|off|false$/i.test(value))
                 result.customServers = value.split(/[\s,]+/).filter(validateDnsAddress).slice(0, 16);
         } else if (key === "servers" || key === "custom dns servers") {
+            readingServers = true;
             result.customServers = value.split(/[\s,]+/).filter(validateDnsAddress).slice(0, 16);
             if (result.customServers.length)
                 result.mode = "custom";

@@ -1,12 +1,13 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
+import qs.Commons as Commons
 
 Item {
   id: root
 
-  property color color: Color.foreground
-  property color urgentColor: Color.urgent
+  property color color: Commons.Color.foreground
+  property color urgentColor: Commons.Color.urgent
   property real iconSize: Style.font.icon
 
   // Item already supplies the public string `state` property.

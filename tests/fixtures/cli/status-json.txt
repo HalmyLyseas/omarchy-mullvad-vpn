@@ -1,1 +1,1 @@
-{"state":"disconnected","details":{"location":{"country":"France","city":"Pantin"},"locked_down":false}}
+{"state":"disconnected","details":{"location":{"latitude":48.8558,"longitude":2.3494,"ipv4":"192.0.2.1","ipv6":null,"mullvad_exit_ip":false,"hostname":null,"city":"Pantin","country":"France","entry_hostname":null,"entry_city":null,"entry_country":null},"locked_down":false}}

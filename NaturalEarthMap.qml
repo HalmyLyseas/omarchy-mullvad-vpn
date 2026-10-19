@@ -1,11 +1,12 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
+import qs.Commons as Commons
 
 // Natural Earth 1:50m land and international boundaries, simplified to 0.3 map units.
 Shape {
   id: root
-  property color foreground: Color.foreground
+  property color foreground: Commons.Color.foreground
   property real zoomLevel: 1
   antialiasing: true
 

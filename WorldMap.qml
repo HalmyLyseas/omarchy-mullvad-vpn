@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Shapes
 import qs.Commons
+import qs.Commons as Commons
 
 Item {
   id: root
@@ -8,8 +9,8 @@ Item {
   property var locations: []
   property var selectedPoint: null
   property var connectedPoint: null
-  property color foreground: Color.foreground
-  property color accent: Color.accent
+  property color foreground: Commons.Color.foreground
+  property color accent: Commons.Color.accent
   property real zoomLevel: 1
   property real centerX: 500
   property real centerY: 250

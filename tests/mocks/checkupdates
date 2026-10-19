@@ -10,4 +10,4 @@ case "${MULLVAD_MOCK_MODE:-ok}" in
     ;;
   no-updates) exit 2 ;;
 esac
-printf 'mullvad-vpn 2026.4-1 -> 2026.5-1\nunrelated 1 -> 2\n'
+printf 'mullvad-vpn 2026.5-1 -> 2026.6-1\nunrelated 1 -> 2\n'

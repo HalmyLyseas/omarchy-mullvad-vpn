@@ -22,12 +22,22 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM HUP
 
-qmltestrunner_bin="$(PATH="$trusted_system_path" command -v qmltestrunner || true)"
-if [[ -z "$qmltestrunner_bin" && -x /usr/lib/qt6/bin/qmltestrunner ]]; then
-  qmltestrunner_bin=/usr/lib/qt6/bin/qmltestrunner
+qt6_qmltestrunner=/usr/lib/qt6/bin/qmltestrunner
+if [[ -x "$qt6_qmltestrunner" ]]; then
+  # Prefer the explicit Qt 6 binary: a Qt 5 qmltestrunner on PATH cannot load
+  # these tests and can exit silently.
+  qmltestrunner_bin="$qt6_qmltestrunner"
+else
+  qmltestrunner_bin="$(PATH="$trusted_system_path" command -v qmltestrunner || true)"
+  if [[ -n "$qmltestrunner_bin" && -x "$qmltestrunner_bin" ]]; then
+    ldd_bin="$(PATH="$trusted_system_path" command -v ldd || true)"
+    if [[ -z "$ldd_bin" ]] || ! "$ldd_bin" "$qmltestrunner_bin" 2>/dev/null | grep -q 'libQt6QuickTest'; then
+      qmltestrunner_bin=""
+    fi
+  fi
 fi
 [[ -n "$qmltestrunner_bin" && -x "$qmltestrunner_bin" ]] || {
-  echo "physical input suite requires qmltestrunner (Arch: qt6-declarative)" >&2
+  echo "physical input suite requires a Qt 6 qmltestrunner (Arch: qt6-declarative)" >&2
   exit 1
 }
 timeout_bin="$(PATH="$trusted_system_path" command -v timeout || true)"
@@ -114,6 +124,12 @@ fi
 command_pid=""
 if [[ "$command_status" -ne 0 ]]; then
   echo "physical Qt Quick Tests failed (status $command_status)" >&2
+  head -c 65536 "$log" >&2
+  exit 1
+fi
+if grep -E 'Unable to assign \[undefined\] to QColor|Cannot read property .(background|border). of undefined' "$log" \
+    | grep -Fq "$plugin_dir"; then
+  echo "physical Qt Quick Tests reported unresolved palette bindings" >&2
   head -c 65536 "$log" >&2
   exit 1
 fi

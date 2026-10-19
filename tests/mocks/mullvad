@@ -79,7 +79,7 @@ case "$*" in
     fi
     cat "$fixtures/version.txt"
     ;;
-  version) printf 'Current version: 2026.4\nIs supported: true\nSuggested upgrade: none\n' ;;
+  version) printf 'Current version: 2026.5\nIs supported: true\nSuggested upgrade: none\n' ;;
   "status --json")
     if [[ "$mode" == status-garbage ]]; then printf 'garbage\n'; exit 0; fi
     if [[ "$mode" == availability-recovery
@@ -118,7 +118,13 @@ case "$*" in
   "lockdown-mode get") echo "Block traffic when the VPN is disconnected: off" ;;
   "auto-connect get") echo "Autoconnect: off" ;;
   "lan get") echo "Local network sharing setting: block" ;;
-  "dns get") printf 'Custom DNS: no\nBlock ads: false\nBlock trackers: false\nBlock malware: false\n' ;;
+  "dns get")
+    if [[ "$mode" == dns-custom ]]; then
+      cat "$fixtures/dns-get-custom.txt"
+    else
+      printf 'Custom DNS: no\nBlock ads: false\nBlock trackers: false\nBlock malware: false\n'
+    fi
+    ;;
   "anti-censorship get") printf 'mode: auto\nudp2tcp settings: any port\n' ;;
   "split-tunnel list")
     if [[ "$mode" == cli-contract ]]; then

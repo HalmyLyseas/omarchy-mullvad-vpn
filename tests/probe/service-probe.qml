@@ -132,7 +132,7 @@ ShellRoot {
           root.service.updateCheckedAt = 0
           root.service._updateCheckAttemptedAt = 0
           root.service._autoUpdateCheckPending = true
-          root.service._applyRead("packageInfo", "mullvad-vpn\t2026.4-1\tMullvad VPN\t2026-09-01 12:00", "", 0)
+          root.service._applyRead("packageInfo", "mullvad-vpn\t2026.5-1\tMullvad VPN\t2026-09-01 12:00", "", 0)
           root.elapsed = 0
           updateDrain.start()
         } else if (root.scenario === "status-failure-clears-daemon") {

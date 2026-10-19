@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.2
+
+- Qualify the palette singleton as `Commons.Color` for Omarchy 4.0.5/Qt 6.12, removing undefined QColor and confirmation-dialog background warnings.
+- Support Mullvad CLI 2026.5 alongside 2026.4, and remove the untested-version warning for both series.
+- Parse the real multi-line custom DNS `Servers:` output, including IPv6 resolvers.
+- Prefer a Qt 6 `qmltestrunner` and reject physical-test logs with unresolved palette bindings.
+- Validate the shell gate against exact Omarchy 4.0.4 and 4.0.5 tags.
+
 ## 1.6.1
 
 - Fix the hourly update check always failing: bound `checkupdates` output through a pipe instead of `ulimit -f`, which also capped pacman's database sync and killed it with SIGXFSZ.

@@ -60,7 +60,12 @@ check(["relay", "get"], output => {
 check(["auto-connect", "get"], output => assert.match(output, /Autoconnect: (on|off)/));
 check(["lan", "get"], output => assert.match(output, /Local network sharing setting: (allow|block)/));
 check(["lockdown-mode", "get"], output => assert.match(output, /Block traffic when the VPN is disconnected: (on|off)/));
-check(["dns", "get"], output => assert.match(output, /Custom DNS: (yes|no)/));
+check(["dns", "get"], output => {
+  assert.match(output, /Custom DNS: (yes|no)/);
+  const dns = Model.parseDns(output);
+  if (/^Custom DNS:\s*yes/m.test(output))
+    assert.ok(dns.customServers.length > 0, "custom DNS output did not yield any servers");
+});
 check(["anti-censorship", "get"], output => assert.match(output, /mode: (auto|off|wireguard-port|udp2tcp|shadowsocks|quic|lwo)/));
 check(["split-tunnel", "list"], output => assert.match(output, /^Excluded PIDs:/));
 

@@ -5,6 +5,7 @@ import QtQuick.Window
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 import "Model.js" as Model
 
@@ -47,9 +48,9 @@ Panel {
     return index === 3 || (index === 0 ? !accountRequired : cliReady && !accountRequired)
   }
 
-  readonly property color foreground: bar ? bar.foreground : Color.foreground
-  readonly property color urgent: bar ? bar.urgent : Color.urgent
-  readonly property color accent: Color.accent
+  readonly property color foreground: bar ? bar.foreground : Commons.Color.foreground
+  readonly property color urgent: bar ? bar.urgent : Commons.Color.urgent
+  readonly property color accent: Commons.Color.accent
   readonly property color dim: Qt.darker(foreground, 1.5)
   readonly property string fontFamily: bar ? bar.fontFamily : Style.font.family
   readonly property color stateColor: hostWidget ? hostWidget.stateColor : foreground
@@ -585,7 +586,7 @@ Panel {
         id: confirmDialog
         anchors.fill: parent
         foreground: root.foreground
-        background: Color.popups.background
+        background: Commons.Color.popups.background
         focus: opened
         onOpenedChanged: if (opened) Qt.callLater(function() { confirmDialog.forceActiveFocus() })
         Keys.onPressed: function(event) {
@@ -724,8 +725,8 @@ Panel {
         visible: !service.installed || !service.daemonRunning
         width: parent.width
         implicitHeight: unavailableText.implicitHeight + Style.space(24)
-        color: Style.normalFillFor(root.foreground, Color.accent)
-        borderSpec: Border.controlSpec("normal", root.foreground, Color.accent)
+        color: Style.normalFillFor(root.foreground, Commons.Color.accent)
+        borderSpec: Border.controlSpec("normal", root.foreground, Commons.Color.accent)
         radius: Style.cornerRadius
 
         Text {

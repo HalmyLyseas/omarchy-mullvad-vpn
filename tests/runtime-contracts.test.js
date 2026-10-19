@@ -306,12 +306,12 @@ test("IPC lockdown accepts only on/off and reaches the service readiness guard",
 test("IPC diagnostic contract maps read-only update results to legacy target objects", () => {
     let calls = 0;
     const service = {
-        cliVersion: "2026.4", cliVersionSupported: true, lockdown: false,
-        daemonVersion: "2026.4", daemonSupported: true, suggestedUpgrade: "",
+        cliVersion: "2026.5", cliVersionSupported: true, lockdown: false,
+        daemonVersion: "2026.5", daemonSupported: true, suggestedUpgrade: "",
         daemonRunning: true, daemonPid: 4242,
-        packages: [{ name: "mullvad-vpn", version: "2026.4-1", description: "Mullvad VPN", installedAt: "2026-09-01 12:00", installedAtIso: "2026-09-01T10:00:00.000Z", buildAt: "2026-08-30T10:00:00.000Z" }],
+        packages: [{ name: "mullvad-vpn", version: "2026.5-1", description: "Mullvad VPN", installedAt: "2026-09-01 12:00", installedAtIso: "2026-09-01T10:00:00.000Z", buildAt: "2026-08-30T10:00:00.000Z" }],
         updateCheckStatus: "unavailable", updateCheckedAt: 1234,
-        updateResults: ["mullvad-vpn 2026.4-1 -> 2026.5-1"],
+        updateResults: ["mullvad-vpn 2026.5-1 -> 2026.6-1"],
         checkForUpdates() { calls++; return "checking"; }
     };
     const ipc = methods("Panel.qml", 4, { service });
@@ -323,10 +323,10 @@ test("IPC diagnostic contract maps read-only update results to legacy target obj
     for (const key of ["cliVersion", "cliVersionSupported", "lockdown", "daemonVersion", "daemonSupported",
         "suggestedUpgrade", "daemonRunning", "daemonPid", "updateCheckStatus", "updateCheckedAt"])
         assert.deepEqual(info[key], service[key]);
-    assert.deepEqual(info.packages, [{ name: "mullvad-vpn", version: "2026.4-1", description: "Mullvad VPN",
+    assert.deepEqual(info.packages, [{ name: "mullvad-vpn", version: "2026.5-1", description: "Mullvad VPN",
         installedAt: "2026-09-01T10:00:00.000Z", buildAt: "2026-08-30T10:00:00.000Z" }]);
     assert.equal(info.updateAvailable, true);
-    assert.deepEqual(info.updateTargets, [{ name: "mullvad-vpn", current: "2026.4-1", latest: "2026.5-1" }]);
+    assert.deepEqual(info.updateTargets, [{ name: "mullvad-vpn", current: "2026.5-1", latest: "2026.6-1" }]);
     service.updateResults = [];
     const empty = JSON.parse(ipc.systemInfo());
     assert.equal(empty.updateAvailable, false);
@@ -335,7 +335,7 @@ test("IPC diagnostic contract maps read-only update results to legacy target obj
 
 test("IPC CLI support preserves unknown, supported and unsupported values", () => {
     for (const [cliVersion, cliVersionSupported, expected] of [
-        ["", false, null], ["2026.4", true, true], ["2025.1", false, false]
+        ["", false, null], ["2026.4", true, true], ["2026.5", true, true], ["2025.1", false, false]
     ]) {
         const service = { cliVersion, cliVersionSupported, packages: [], updateResults: [] };
         const ipc = methods("Panel.qml", 4, { service });

@@ -53,7 +53,7 @@ test("physical suite covers panel routing, dropdowns, dialogs, and map payloads"
     const source = readFileSync(join(root, "tests/quicktest/tst_physical_input.qml"), "utf8");
     for (const name of ["panel_keyboard", "dropdown_keyboard", "dropdown_pointer",
         "searchable_keyboard", "searchable_pointer", "dialog_keyboard",
-        "dialog_pointer", "world_map_pointer"])
+        "dialog_pointer", "world_map_pointer", "panel_palette"])
         assert.match(source, new RegExp(`test_${name}`));
     assert.match(source, /SignalSpy/);
 });

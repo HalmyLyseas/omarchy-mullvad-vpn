@@ -1,5 +1,6 @@
 import QtQuick
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 BarWidget {
@@ -8,9 +9,9 @@ BarWidget {
 
   readonly property var shell: bar && bar.shell ? bar.shell : null
   readonly property var svc: shell ? shell.serviceFor(moduleName) : null
-  readonly property color foreground: bar ? bar.foreground : Color.foreground
-  readonly property color urgent: bar ? bar.urgent : Color.urgent
-  readonly property color barForeground: bar ? bar.barForeground : Color.foreground
+  readonly property color foreground: bar ? bar.foreground : Commons.Color.foreground
+  readonly property color urgent: bar ? bar.urgent : Commons.Color.urgent
+  readonly property color barForeground: bar ? bar.barForeground : Commons.Color.foreground
   readonly property string stateIcon: !svc ? "error"
     : svc.state === "checking" ? "connecting"
     : !svc.installed || !svc.daemonRunning || svc.state === "error" ? "error"

@@ -20,7 +20,7 @@ Mullvad VPN controls for the Omarchy Quattro bar.
 - Explore eligible Mullvad relay cities on an offline, zoomable world map
 - Inspect bounded, read-only CLI, daemon, package, and update-check diagnostics
 
-The plugin targets the Omarchy 4.0.4 stock bar. Replacement bars that do not expose its scoped service show unavailable controls rather than attempting access to host internals.
+The plugin targets the Omarchy 4.0.4 and 4.0.5 stock bar. Replacement bars that do not expose its scoped service show unavailable controls rather than attempting access to host internals.
 
 ## Install
 
@@ -28,7 +28,7 @@ The plugin targets the Omarchy 4.0.4 stock bar. Replacement bars that do not exp
 omarchy plugin add https://github.com/HalmyLyseas/omarchy-mullvad-vpn.git --enable
 ```
 
-The plugin has been validated with the Mullvad VPN 2026.4 CLI. Other versions are not blocked; the panel warns when a CLI version is untested. Install and enable Mullvad VPN separately before using the controls.
+The plugin has been validated with the Mullvad VPN 2026.4 and 2026.5 CLIs. Other versions are not blocked; the panel warns when a CLI version is untested. Install and enable Mullvad VPN separately before using the controls.
 
 ## Controls
 

@@ -113,7 +113,7 @@ check_orphans() {
 json="$(run_case ok ok login)"
 check_json "$json" "ok probe completes" note empty ignored
 check_json "$json" "reads populate service state" installed eq true daemonRunning eq true
-check_json "$json" "direct probe preserves CLI-version support state" cliVersion eq 2026.4 cliVersionSupported eq true
+check_json "$json" "direct probe preserves CLI-version support state" cliVersion eq 2026.5 cliVersionSupported eq true
 check_json "$json" "relay data parses" locations gt 0
 check_json "$json" "excluded process details resolve" excludedProcessesLength eq 14
 check_json "$json" "one app launch folds into one group" excludedGroupCount eq 1
@@ -184,7 +184,7 @@ check_command "excluded launch stays inside the mock boundary" grep -Fq 'mullvad
 check_orphans launch
 
 json="$(run_case system ok system)"
-check_json "$json" "System diagnostics include daemon and package metadata" daemonVersion eq 2026.4 daemonSupported eq true daemonPid eq 4242 packageCount eq 1
+check_json "$json" "System diagnostics include daemon and package metadata" daemonVersion eq 2026.5 daemonSupported eq true daemonPid eq 4242 packageCount eq 1
 check_json "$json" "read-only update check records result and timestamp" updateCheckStatus eq ok updateResultCount eq 1 updateCheckedAt gt 0
 check_json "$json" "update check remains outside the service busy queue" busyDuringUpdateCheck eq false
 check_command "System update check invokes only the read-only helper" grep -Fq 'checkupdates <>' "$scratch/system.mock"

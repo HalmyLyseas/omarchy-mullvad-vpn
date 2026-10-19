@@ -122,7 +122,7 @@ check_json "$json" "Excluded page receives the grouped model" pageLoaded eq true
 
 json="$(run_case local-app-catalogue)"
 check_json "$json" "local application catalogue scenario loads the Excluded page" note empty ignored selectedPage eq 2
-check_json "$json" "probe matches the scoped Omarchy 4.0.4 facade" appLibraryNull eq true ownService eq true foreignServiceNull eq true
+check_json "$json" "probe matches the scoped Omarchy 4.0.4/4.0.5 facade" appLibraryNull eq true ownService eq true foreignServiceNull eq true
 check_json "$json" "excluded-process labels use local desktop metadata" excludedMetadataCount ge 1
 check_json "$json" "local catalogue does not require the host app library" emptyText eq 'No installed applications match your search.'
 

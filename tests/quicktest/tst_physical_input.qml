@@ -1,6 +1,7 @@
 import QtQuick
 import QtTest
 import Quickshell
+import qs.Commons as Commons
 import qs.Ui as Ui
 import "../.." as Plugin
 
@@ -47,7 +48,7 @@ Item {
     property string lastError: ""
     property string actionStatus: ""
     property bool cliVersionSupported: true
-    property string cliVersion: "2026.4"
+    property string cliVersion: "2026.5"
     property string daemonVersion: ""
     property var daemonSupported: null
     property string suggestedUpgrade: ""
@@ -163,6 +164,14 @@ Item {
     SignalSpy { id: confirmSpy; signalName: "confirmed" }
     SignalSpy { id: mapSpy; signalName: "locationSelected" }
 
+    function test_panel_palette_bindings_resolve() {
+      var panel = createTemporaryObject(panelComponent, scene)
+      verify(panel !== null)
+      compare(panel.accent, Commons.Color.accent)
+      compare(panel.foreground, fakeBar.foreground)
+      compare(panel.urgent, fakeBar.urgent)
+    }
+
     function init() {
       changedSpy.clear()
       cancelSpy.clear()
@@ -179,7 +188,7 @@ Item {
       fakeService.accountKnown = true
       fakeService.active = false
       fakeService.disconnectCount = 0
-      fakeService.cliVersion = "2026.4"
+      fakeService.cliVersion = "2026.5"
       fakeService.cliVersionSupported = true
       fakeService.lastError = ""
       fakeService.statusText = "Disconnected"

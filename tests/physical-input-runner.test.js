@@ -9,11 +9,12 @@ function source(path) {
     return readFileSync(join(root, path), "utf8");
 }
 
-test("physical Qt Quick Test runner resolves the Arch binary and fails closed", () => {
+test("physical Qt Quick Test runner prefers Qt 6 and fails closed", () => {
     const runner = source("tests/quicktest/run");
+    assert.match(runner, /qt6_qmltestrunner=\/usr\/lib\/qt6\/bin\/qmltestrunner/);
     assert.match(runner, /command -v qmltestrunner/);
-    assert.match(runner, /\/usr\/lib\/qt6\/bin\/qmltestrunner/);
-    assert.match(runner, /requires qmltestrunner/);
+    assert.match(runner, /libQt6QuickTest/);
+    assert.match(runner, /requires a Qt 6 qmltestrunner/);
     assert.ok(statSync(join(root, "tests/quicktest/run")).mode & 0o111);
 });
 
@@ -46,6 +47,9 @@ test("physical Qt Quick Test runner bounds diagnostics and rejects timeout or fa
     const failureCheck = runner.indexOf("physical Qt Quick Tests failed");
     assert.ok(orphanCheck >= 0 && orphanCheck < failureCheck,
         "orphan rejection must run even when qmltestrunner fails or times out");
+    assert.match(runner, /unresolved palette bindings/);
+    assert.match(runner, /Unable to assign/);
+    assert.match(runner, /grep -Fq "\$plugin_dir"/);
 });
 
 test("the main and clean-archive gates inventory physical Qt Quick Tests", () => {
@@ -56,10 +60,10 @@ test("the main and clean-archive gates inventory physical Qt Quick Tests", () =>
     assert.match(gate, /archive_dir\/tests\/quicktest\/run/);
 });
 
-test("CI installs the Arch qmltestrunner provider for Omarchy 4.0.4", () => {
+test("CI installs the Arch qmltestrunner provider for Omarchy 4.0.4 and 4.0.5", () => {
     const workflow = source(".github/workflows/test.yml");
     assert.match(workflow, /qt6-declarative/);
-    assert.match(workflow, /git clone --depth 1 --branch v4\.0\.4/);
+    assert.match(workflow, /omarchy: \[v4\.0\.4, v4\.0\.5\]/);
     assert.doesNotMatch(workflow, /v4\.0\.3/);
 });
 

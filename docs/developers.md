@@ -15,9 +15,11 @@
 
 The System page contains account login and logout plus diagnostics. Account actions require a working Mullvad CLI and daemon, and login passes the account number over stdin without saving it. A confirmed logout routes the panel to System and disables the other tabs; successful login unlocks them. System displays account errors and offers a Disconnect button if a tunnel remains active. Tunnel connect and relay-selection follow-up actions reject a confirmed logout in the service, including IPC and bar shortcuts. Periodic status refreshes also query account state so external login and logout are eventually reflected. Failed or unrecognized account reads preserve the last confirmed account state; while state is unknown, controls remain available and the CLI decides whether actions can succeed. Account reads started before login or logout completion cannot overwrite the resulting state. System has no installer, package-update action, privilege escalation, or application-launch path. Package metadata reads are local; the optional automatic/manual update check is the sole network-capable diagnostic.
 
-## Omarchy 4.0.4 facade
+## Omarchy 4.0.4 and 4.0.5 facade
 
 A third-party `bar-widget` receives a scoped facade. `serviceFor("halmylyseas.mullvad-vpn")` may resolve the plugin service; foreign service IDs must return `null`. The facade's `appLibrary` is `null` because the manifest does not declare `kind: "menu"`. The plugin does not traverse parent objects, private service registries, or replacement-bar internals to escape this boundary.
+
+Omarchy 4.0.5 runs on Qt 6.12, whose `QtQuick.Color` type shadows the unqualified palette singleton. Every QML file that uses the palette imports `qs.Commons as Commons` and references `Commons.Color`; the unqualified `qs.Commons` import remains for `Style`, `Util`, and `Border`. `tests/qml-palette.test.js` rejects bare `Color.` references, and the physical suite rejects logs that report unresolved QColor or palette bindings.
 
 Excluded-app discovery uses the public Quickshell `DesktopEntries` catalogue. Search scans at most 4,096 entries, caps keyword count at 64, and bounds every searchable field before concatenation. Standard `noDisplay` entries are filtered. Omarchy's private launcher-hide configuration is not available through the scoped facade. Empty search shows resolved recent desktop IDs, while a non-empty query searches the bounded local catalogue. Launch execution remains the fixed argv returned by `Model.argv("launchExcluded", ...)`; safe desktop IDs may contain spaces and parentheses, while path syntax and shell metacharacters remain rejected. The panel persists the recent ID and closes only when the service reports that dispatch succeeded.
 
@@ -78,9 +80,9 @@ The gate runs:
 7. `tests/probe/run-settings` against the current scoped host facade and an isolated `shell.json`.
 8. Node tests, runner/mock syntax, QML lint, and manifest validation again from a clean archive of the proposed index.
 
-The physical-input suite requires `qmltestrunner`, provided on Arch by `qt6-declarative` at `/usr/lib/qt6/bin/qmltestrunner`. The runner first accepts `command -v qmltestrunner`, then checks that explicit Arch path, and fails closed when neither is available.
+The local lint gate prefers Qt 6 `/usr/lib/qt6/bin/qmllint`. The physical-input suite requires a Qt 6 `qmltestrunner`, provided on Arch by `qt6-declarative` at `/usr/lib/qt6/bin/qmltestrunner`. The runner prefers that explicit path, verifies any PATH-resolved fallback links `libQt6QuickTest`, and fails closed rather than running a Qt 5 binary. It also rejects runs whose log reports unresolved QColor or palette bindings.
 
-The probe suites mock all VPN-changing commands, `checkupdates`, process lookup, and excluded-application launch; they must not mutate the live daemon or invoke a real package manager or network update check. CI clones exact Omarchy `v4.0.4` and runs the gate against its `shell/` and `bin/omarchy-plugin-validate`. Local validation defaults to `/usr/share/omarchy/shell` and the installed `omarchy-plugin-validate`; set `OMARCHY_SHELL_DIR` and `OMARCHY_PLUGIN_VALIDATOR` to test another source tree.
+The probe suites mock all VPN-changing commands, `checkupdates`, process lookup, and excluded-application launch; they must not mutate the live daemon or invoke a real package manager or network update check. CI clones exact Omarchy `v4.0.4` and `v4.0.5` and runs the gate against its `shell/` and `bin/omarchy-plugin-validate`. Local validation defaults to `/usr/share/omarchy/shell` and the installed `omarchy-plugin-validate`; set `OMARCHY_SHELL_DIR` and `OMARCHY_PLUGIN_VALIDATOR` to test another source tree.
 
 ## Release discipline
 
