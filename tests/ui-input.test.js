@@ -62,3 +62,12 @@ test("the real Panel consumes WorldMap selection through its inert-service bound
     const panel = readFileSync(join(root, "Panel.qml"), "utf8");
     assert.match(panel, /WorldMap\s*\{[\s\S]*?onLocationSelected:\s*function\(location\)\s*\{\s*root\.chooseLocation\(location, true\)\s*\}/);
 });
+
+test("UI probe uses an isolated desktop-entry catalogue", () => {
+    const runner = readFileSync(join(root, "tests/probe/run-ui"), "utf8");
+    assert.match(runner, /tests\/fixtures\/desktop\/applications/);
+    assert.match(runner, /XDG_DATA_HOME="\$scratch\/data"/);
+    assert.match(runner, /XDG_DATA_DIRS="\$scratch\/data"/);
+    for (const file of ["Firefox.desktop", "Zoom (Web).desktop", "Hidden.desktop"])
+        assert.ok(require("node:fs").existsSync(join(root, "tests/fixtures/desktop/applications", file)));
+});

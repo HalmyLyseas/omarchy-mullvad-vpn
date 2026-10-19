@@ -18,7 +18,8 @@ if [[ -z "$qs_bin" ]]; then
 fi
 [[ -n "$timeout_bin" ]] || { echo "UI probe requires timeout" >&2; exit 1; }
 
-mkdir -p "$scratch/qmlroot" "$scratch/bin"
+mkdir -p "$scratch/qmlroot" "$scratch/bin" "$scratch/data/applications"
+cp "$plugin_dir/tests/fixtures/desktop/applications/"*.desktop "$scratch/data/applications/"
 ln -s "$omarchy_shell_dir" "$scratch/qmlroot/qs"
 ln -s "$plugin_dir/tests/mocks/mullvad" "$scratch/bin/mullvad"
 ln -s "$plugin_dir/tests/mocks/mullvad-exclude" "$scratch/bin/mullvad-exclude"
@@ -63,6 +64,7 @@ run_case() {
     MULLVAD_PACMAN_LOCAL_DB="$plugin_dir/tests/fixtures/pacman-local" \
     MULLVAD_UI_SCENARIO="$scenario" MULLVAD_PLUGIN_DIR="$plugin_dir" \
     QML_IMPORT_PATH="$scratch/qmlroot" PATH="$scratch/bin" \
+    XDG_DATA_HOME="$scratch/data" XDG_DATA_DIRS="$scratch/data" \
     "$timeout_bin" 20 "$qs_bin" -n -p "$probe_dir/ui-probe.qml" > "$log" 2>&1
   local command_status=$?
   "$probe_dir/collect-result" "$log" "$command_status" "$mocklog" || {

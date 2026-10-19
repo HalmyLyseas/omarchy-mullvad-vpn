@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Zoom (Web)
+GenericName=Video Conference
+Comment=Join a video meeting
+Exec=/usr/bin/zoom
+Icon=zoom
+Terminal=false
+Categories=Network;VideoConference;
+Keywords=meeting;video;call;

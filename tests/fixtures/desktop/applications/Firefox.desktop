@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Firefox
+GenericName=Web Browser
+Comment=Browse the web
+Exec=/usr/bin/firefox %u
+Icon=firefox
+Terminal=false
+Categories=Network;WebBrowser;
+Keywords=internet;browser;
