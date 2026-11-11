@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.3
+
+- Target Omarchy 4.5.0 and 4.0.5; earlier 4.0.x builds are outside the tested contract.
+- Complete the 4.5 test-local Quickshell mocks (`Singleton`, `SplitParser`, `Hyprland`, `Pipewire`, and the added `FileView`/`Process` properties) so the real physical-input suite compiles and runs against 4.5.
+- Read confirmation-dialog labels from `cancelText`/`confirmText`, so pointer coverage survives the host's 4.5 localization.
+- Honor the host's reduce-motion setting for the map flight when `Style.duration` is available.
+- Keep automatically discovered agent instructions out of the installed plugin payload.
+
 ## 1.6.2
 
 - Qualify the palette singleton as `Commons.Color` for Omarchy 4.0.5/Qt 6.12, removing undefined QColor and confirmation-dialog background warnings.
