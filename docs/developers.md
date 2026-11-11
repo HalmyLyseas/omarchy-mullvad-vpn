@@ -58,7 +58,7 @@ See [the threat model](threat-model.md) for trust boundaries and residual risks.
 
 ## Local dropdown controls
 
-`OmaDropdown.qml` and `OmaSearchableDropdown.qml` are local MIT-licensed Omarchy controls with corrected trigger-click closing. They use the host kit's focus, hover-cursor, and popup styling rather than a native ComboBox. Both accept strings or `{ value, label }` option objects; the searchable control also accepts `description` and filters labels and descriptions case-insensitively. Closing its popup clears the filter.
+`OmaDropdown.qml` and `OmaSearchableDropdown.qml` are local controls derived from Omarchy's MIT-licensed `Dropdown.qml` and `SearchableDropdown.qml`, with corrected trigger-click closing. Their upstream source and copyright notice are recorded in [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). They use the host kit's focus, hover-cursor, and popup styling rather than a native ComboBox. Both accept strings or `{ value, label }` option objects; the searchable control also accepts `description` and filters labels and descriptions case-insensitively. Closing its popup clears the filter.
 
 Tab focuses a trigger; Enter/Space opens it. In the plain dropdown, j/k or Up/Down moves between options and Enter selects. The searchable control focuses its filter on open; Down moves into results and Up from the first result returns to the filter. Escape closes either popup. Parent panels use `popupOpen` to suspend their own key catcher while a popup owns input, and `hovered(bool)` to synchronize cursor styling.
 

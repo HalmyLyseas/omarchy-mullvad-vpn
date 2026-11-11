@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.5
+
+- Record the upstream Omarchy MIT copyright and permission notice for the vendored `OmaDropdown`/`OmaSearchableDropdown` controls in `THIRD_PARTY_NOTICES.md`, and identify them in the files, README and developer notes.
+
 ## 1.6.4
 
 - Replace native paste in the relay search, DNS, application-search and account fields with a bounded `PasteJob`: direct `wl-paste`, 4,096-character cap, 1.5 s deadline, TERM/KILL escalation, `pkill -P` descendant cleanup, and cancellation. This closes the shared-shell availability path before clipboard text reaches Qt.

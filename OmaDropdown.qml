@@ -4,8 +4,8 @@ import qs.Commons
 import qs.Commons as Commons
 import qs.Ui as Ui
 
-// Local MIT-licensed Omarchy control with corrected trigger-click closing.
-// API and keyboard behavior: docs/developers.md.
+// Portions derived from Omarchy's MIT-licensed Dropdown; see
+// THIRD_PARTY_NOTICES.md. Local trigger-click fix and bounded PasteField.
 Item {
   id: root
 

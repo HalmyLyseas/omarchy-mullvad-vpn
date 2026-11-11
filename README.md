@@ -78,4 +78,7 @@ Maintained by [HalmyLyseas](https://github.com/HalmyLyseas), based on [kallupx/o
 
 MIT © 2026 kallupx. Original copyright and license are retained.
 
+The dropdown controls include portions of Omarchy's MIT-licensed shell UI;
+their copyright and license are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
 The map uses public-domain [Natural Earth 1:50m land](https://www.naturalearthdata.com/downloads/50m-physical-vectors/) and [country boundaries](https://www.naturalearthdata.com/downloads/50m-cultural-vectors/) bundled with the plugin. Relay locations come from the Mullvad CLI.
