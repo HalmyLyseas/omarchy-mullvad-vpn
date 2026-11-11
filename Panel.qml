@@ -1151,9 +1151,10 @@ Panel {
       RowLayout {
         width: parent.width
         spacing: Style.space(8)
-        TextField {
+        PasteField {
           id: dnsField
           Layout.fillWidth: true
+          pasteLimit: 256
           foreground: root.foreground
           placeholderText: "Custom DNS: 1.1.1.1, 2606:4700:4700::1111"
           text: ((service.dns || {}).servers || []).join(", ")
@@ -1283,7 +1284,7 @@ Panel {
       PanelSeparator { foreground: root.foreground }
       PanelSectionHeader { text: "LAUNCH AN APPLICATION"; foreground: root.foreground; fontFamily: root.fontFamily }
 
-      TextField {
+      PasteField {
         id: appSearch
         width: parent.width
         foreground: root.foreground
@@ -1401,10 +1402,12 @@ Panel {
           width: parent.width
           spacing: Style.space(8)
 
-          TextField {
+          PasteField {
             id: accountField
             Layout.fillWidth: true
             password: true
+            pasteLimit: 19
+            digitsOnly: true
             foreground: root.foreground
             placeholderText: "16-digit account number"
             inputMethodHints: Qt.ImhDigitsOnly | Qt.ImhSensitiveData | Qt.ImhNoPredictiveText

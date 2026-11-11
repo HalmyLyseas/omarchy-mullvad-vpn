@@ -9,5 +9,6 @@ bash "$root/tests/run-cli-contract" || status=1
 bash "$root/tests/probe/run" || status=1
 bash "$root/tests/probe/run-ui" || status=1
 bash "$root/tests/quicktest/run" || status=1
+bash "$root/tests/probe/run-paste" || status=1
 bash "$root/tests/probe/run-settings" || status=1
 exit "$status"

@@ -20,6 +20,10 @@ Mullvad VPN controls for the Omarchy Quattro bar.
 - Explore eligible Mullvad relay cities on an offline, zoomable world map
 - Inspect bounded, read-only CLI, daemon, package, and update-check diagnostics
 
+Pasting into the DNS, application, relay and account fields uses `wl-paste`
+from `wl-clipboard`; if that tool is unavailable, typing still works and paste
+is ignored.
+
 The plugin targets the Omarchy 4.5.0 and 4.0.5 stock bar (current and previous release). Earlier 4.0.x builds are outside the tested contract. Replacement bars that do not expose its scoped service show unavailable controls rather than attempting access to host internals.
 
 ## Install

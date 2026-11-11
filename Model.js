@@ -1066,6 +1066,28 @@ function searchDesktopEntries(values, query, maxRows) {
     return rows.slice(0, limit).map(function(row) { return row.entry; });
 }
 
+// Inserts a bounded clipboard read at the current selection: controls become
+// spaces, whitespace collapses, and the result is capped at the field limit.
+function pasteQuery(current, selectionStart, selectionEnd, cursor, pasted, limit) {
+    var value = typeof current === "string" ? current : String(current || "");
+    var clean = typeof pasted === "string" ? pasted : String(pasted || "");
+    clean = clean.replace(/[\u0000-\u001f\u007f-\u009f]/g, " ")
+        .replace(/\s+/g, " ").replace(/^\s+|\s+$/g, "");
+    var cap = typeof limit === "number" && limit > 0 ? Math.floor(limit) : 100;
+    var start = selectionStart === null || selectionStart === undefined ? NaN : Math.floor(Number(selectionStart));
+    var end = selectionEnd === null || selectionEnd === undefined ? NaN : Math.floor(Number(selectionEnd));
+    var at = cursor === null || cursor === undefined ? NaN : Math.floor(Number(cursor));
+    if (!isFinite(start) || start < 0 || !isFinite(end) || end < 0) {
+        start = end = isFinite(at) && at >= 0 ? at : value.length;
+    }
+    if (start > end) { var swap = start; start = end; end = swap; }
+    start = Math.min(start, value.length);
+    end = Math.min(end, value.length);
+    if (clean === "") return { text: value.slice(0, cap), cursor: Math.min(start, value.length, cap) };
+    var next = (value.slice(0, start) + clean + value.slice(end)).slice(0, cap);
+    return { text: next, cursor: Math.min(next.length, start + clean.length) };
+}
+
 var api = {
     redact: redact,
     plainText: plainText,
@@ -1105,7 +1127,8 @@ var api = {
     validateFavoriteIndex: validateFavoriteIndex,
     validateDnsAddress: validateDnsAddress,
     validateLocationCode: validateLocationCode,
-    argv: argv
+    argv: argv,
+    pasteQuery: pasteQuery
 };
 
 if (typeof module !== "undefined" && module.exports)

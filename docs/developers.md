@@ -8,7 +8,8 @@
 | `Service.qml` | Owns shared Mullvad state, polling, the status listener, action queues, read-only System diagnostics, deadlines, output bounds, and excluded-process resolution. |
 | `BarWidget.qml` | Resolves only this plugin's service through the scoped bar facade, renders state, and loads `Panel.qml` while the service exists. |
 | `Panel.qml` | Implements Connection (search, favourites, recents, map, relay filters), Advanced (connection policy, DNS, anti-censorship), Excluded, and System (account and diagnostics). Connection and System remain available without the CLI or daemon; with a running daemon and no login, only System is available. It receives the service from `BarWidget.qml`; it does not search host registries. |
-| `Model.js` | Contains pure parsing, validation, redaction, grouping, bounded diagnostic parsing, desktop-entry search, recent-ID normalization, and fixed argv construction. |
+| `Model.js` | Contains pure parsing, validation, redaction, grouping, bounded diagnostic parsing, desktop-entry search, recent-ID normalization, fixed argv construction, and bounded paste insertion. |
+| `PasteField.qml` / `PasteJob.qml` | Replaces native paste in every text field: a direct `wl-paste` child with a 4,096-character cap, 1.5 s deadline, TERM/KILL escalation, `pkill -P` descendant cleanup and cancellation. |
 | `WorldMap.qml` / `NaturalEarthMap.qml` | Render the interactive offline Connection map and bundled 1:50m land and country-boundary shapes. |
 | `scripts/mullvad-package-info` | Reads bounded metadata for the two allowlisted Mullvad packages from pacman's local database without running a package manager. |
 | `scripts/mullvad-update-check` | Runs only `checkupdates`, filters and bounds Mullvad results, and applies its own TERM/KILL timeout. |
@@ -79,7 +80,8 @@ The gate runs:
 4. `tests/probe/run` for mocked process, timeout, output-limit, listener, race, grouping, package metadata, and isolated read-only update-check behavior.
 5. `tests/probe/run-ui` against the real `BarWidget.qml` and `Panel.qml`, including System availability without the CLI or daemon, under the selected Omarchy shell source.
 6. `tests/quicktest/run`, which drives real `QtTest.TestCase` keyboard and pointer events through Panel routing, both dropdowns, confirmation dialogs, and WorldMap markers under the Cage gate.
-7. `tests/probe/run-settings` against the current scoped host facade and an isolated `shell.json`.
+7. `tests/probe/run-paste`, which drives `PasteJob` against a mode-driven `wl-paste` mock: normal, primary, cap boundary, oversized, stalled, TERM-ignoring, failed, cancelled, missing-provider and parent-with-child paths.
+8. `tests/probe/run-settings` against the current scoped host facade and an isolated `shell.json`.
 8. Node tests, runner/mock syntax, QML lint, and manifest validation again from a clean archive of the proposed index.
 
 The local lint gate prefers Qt 6 `/usr/lib/qt6/bin/qmllint`. The physical-input suite requires a Qt 6 `qmltestrunner`, provided on Arch by `qt6-declarative` at `/usr/lib/qt6/bin/qmltestrunner`. The runner prefers that explicit path, verifies any PATH-resolved fallback links `libQt6QuickTest`, and fails closed rather than running a Qt 5 binary. It also rejects runs whose log reports unresolved QColor or palette bindings.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.4
+
+- Replace native paste in the relay search, DNS, application-search and account fields with a bounded `PasteJob`: direct `wl-paste`, 4,096-character cap, 1.5 s deadline, TERM/KILL escalation, `pkill -P` descendant cleanup, and cancellation. This closes the shared-shell availability path before clipboard text reaches Qt.
+- Cover normal, primary, cap-boundary, oversized, stalled, TERM-ignoring, failed, cancelled, missing-provider and parent-with-child reads.
+
 ## 1.6.3
 
 - Target Omarchy 4.5.0 and 4.0.5; earlier 4.0.x builds are outside the tested contract.

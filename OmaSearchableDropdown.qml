@@ -221,8 +221,9 @@ Item {
             width: parent.width
             height: root.popupRowHeight + Style.spacing.controlPaddingX
 
-            Ui.TextField {
+            PasteField {
               id: searchField
+              pasteLimit: 100
               anchors.fill: parent
               anchors.margins: Style.spacing.md
               placeholderText: root.placeholderText
@@ -236,7 +237,7 @@ Item {
                 if (resultList.count > 0) resultList.currentIndex = 0
               }
 
-              Keys.onPressed: function(event) {
+              keyHandler: function(event) {
                 if (root.handleSearchKey(event.key)) event.accepted = true
               }
             }
