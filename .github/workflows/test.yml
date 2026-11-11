@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        omarchy: [v4.0.4, v4.0.5]
+        omarchy: [v4.0.5, v4.5.0]
     env:
       OMARCHY_SHELL_DIR: /tmp/omarchy/shell
       OMARCHY_PLUGIN_VALIDATOR: /tmp/omarchy/bin/omarchy-plugin-validate

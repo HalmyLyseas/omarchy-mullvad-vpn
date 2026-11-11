@@ -60,11 +60,13 @@ test("the main and clean-archive gates inventory physical Qt Quick Tests", () =>
     assert.match(gate, /archive_dir\/tests\/quicktest\/run/);
 });
 
-test("CI installs the Arch qmltestrunner provider for Omarchy 4.0.4 and 4.0.5", () => {
+test("CI installs the Arch qmltestrunner provider for Omarchy 4.0.5 and 4.5.0", () => {
     const workflow = source(".github/workflows/test.yml");
     assert.match(workflow, /qt6-declarative/);
-    assert.match(workflow, /omarchy: \[v4\.0\.4, v4\.0\.5\]/);
-    assert.doesNotMatch(workflow, /v4\.0\.3/);
+    const matrix = workflow.match(/omarchy:\s*\[([^\]]+)\]/);
+    assert.ok(matrix, "workflow declares an Omarchy matrix");
+    assert.deepEqual(matrix[1].split(",").map(value => value.trim()).sort(), ["v4.0.5", "v4.5.0"]);
+    assert.doesNotMatch(workflow, /v4\.0\.3|v4\.0\.4/);
 });
 
 test("developer docs name the Arch qmltestrunner provider and binary", () => {

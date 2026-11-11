@@ -558,8 +558,8 @@ Item {
       cancelSpy.target = dialog
       confirmSpy.target = dialog
       dialog.opened = true
-      var cancelLabel = findTextItem(dialog, "Cancel")
-      var confirmLabel = findTextItem(dialog, "Confirm")
+      var cancelLabel = findTextItem(dialog, dialog.cancelText)
+      var confirmLabel = findTextItem(dialog, dialog.confirmText)
       verify(cancelLabel !== null)
       verify(confirmLabel !== null)
       mouseClick(cancelLabel.parent, cancelLabel.parent.width / 2, cancelLabel.parent.height / 2)

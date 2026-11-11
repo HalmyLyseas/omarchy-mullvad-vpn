@@ -143,7 +143,7 @@ Item {
     property: "flightProgress"
     from: 0
     to: 1
-    duration: root.flightDuration
+    duration: typeof Style.duration === "function" ? Style.duration(root.flightDuration) : root.flightDuration
     easing.type: Easing.InOutSine
   }
 
